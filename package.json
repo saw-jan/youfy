@@ -1,0 +1,32 @@
+{
+    "name": "youfy",
+    "version": "0.0.1",
+    "description": "Youtube audio player",
+    "main": "App.js",
+    "author": "Sawjan G.",
+    "license": "MIT",
+    "scripts": {
+        "build": "webpack -c webpack.config.js",
+        "build:watch": "webpack -c webpack.config.js --watch",
+        "start": "npm run build && electron .",
+        "start:dev": "MODE=dev electron .",
+        "watch": "concurrently \"npm:build:watch\" \"npm:start:dev\""
+    },
+    "devDependencies": {
+        "@babel/core": "^7.16.0",
+        "@babel/preset-env": "^7.16.4",
+        "babel-loader": "^8.2.3",
+        "concurrently": "^6.4.0",
+        "css-loader": "^6.5.1",
+        "electron": "^16.0.4",
+        "electron-reload": "^2.0.0-alpha.1",
+        "html-webpack-plugin": "^5.5.0",
+        "node-sass": "^7.0.0",
+        "sass": "^1.45.0",
+        "sass-loader": "^12.4.0",
+        "style-loader": "^3.3.1",
+        "webpack": "^5.65.0",
+        "webpack-cli": "^4.9.1"
+    },
+    "dependencies": {}
+}

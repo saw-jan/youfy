@@ -1,0 +1,249 @@
+@import "reset";
+@import "variables";
+
+@font-face {
+  font-family: "themify";
+  src: url("../fonts/themify.woff") format("woff");
+  font-weight: 900;
+}
+
+html,
+body {
+  font-family: Arial, Helvetica, sans-serif;
+}
+
+#container {
+  background: $theme_bg;
+  display: grid;
+  grid-template-rows: 40px auto;
+  height: 100vh;
+  width: 100vw;
+  color: rgb(255, 255, 255);
+
+  #header {
+    border-bottom: 2px solid $gray;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+
+    #draggable {
+      width: 100%;
+      height: 100%;
+      -webkit-user-select: none;
+      user-select: none;
+      -webkit-app-region: drag;
+    }
+
+    #searchbar {
+      padding: 8px;
+
+      #search {
+        background-color: $gray;
+        border: none;
+        padding: 4px 8px;
+        font-size: 14px;
+        outline: none;
+        color: $white;
+      }
+    }
+
+    #actions {
+      width: 80px;
+      height: 100%;
+      display: flex;
+
+      i {
+        cursor: pointer;
+        width: 40px;
+        height: inherit;
+        text-align: center;
+        display: table;
+      }
+
+      #ico-minimize {
+        &:hover {
+          background-color: $gray;
+        }
+
+        &:before {
+          display: table-cell;
+          vertical-align: middle;
+          font-family: "themify";
+          font-size: 14px;
+          content: "\e622";
+        }
+      }
+
+      #ico-close {
+        &:hover {
+          background-color: $danger;
+        }
+
+        &:before {
+          display: table-cell;
+          vertical-align: middle;
+          font-family: "themify";
+          font-size: 14px;
+          content: "\e646";
+        }
+      }
+    }
+  }
+
+  #player-container {
+    display: flex;
+    padding: 0 10px;
+
+    #cd {
+      height: 100px;
+      width: 100px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+
+      #cover {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        border: 1px solid rgba(255, 255, 255, 0.5);
+        background: conic-gradient(
+          rgb(255, 253, 149),
+          rgb(155, 255, 197),
+          rgb(255, 255, 255),
+          rgb(255, 255, 255),
+          rgb(155, 255, 197),
+          rgb(255, 255, 255),
+          rgb(176, 255, 251),
+          rgb(255, 253, 149),
+          rgb(255, 255, 255),
+          rgb(255, 255, 255),
+          rgb(255, 255, 255),
+          rgb(218, 166, 255),
+          rgb(178, 255, 210),
+          rgb(255, 255, 255),
+          rgb(255, 253, 149),
+          rgb(255, 255, 255)
+        );
+        height: 80px;
+        width: 80px;
+        border-radius: 100%;
+
+        #hole {
+          background: $theme_bg;
+          height: 15px;
+          width: 15px;
+          border-radius: 100%;
+        }
+      }
+    }
+
+    #player {
+      padding-left: 20px;
+      height: 100px;
+      width: 100%;
+      display: flex;
+      justify-content: center;
+      flex-direction: column;
+
+      #title {
+        height: 100%;
+        display: flex;
+        align-items: center;
+
+        p {
+          width: 200px;
+          white-space: nowrap;
+          overflow: hidden !important;
+          text-overflow: ellipsis;
+        }
+      }
+
+      #controller {
+        height: 100%;
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+
+        i {
+          cursor: pointer;
+
+          &:hover {
+            background: $gray;
+          }
+        }
+
+        #previous {
+          padding: 4px;
+
+          &:before {
+            font-family: "themify";
+            font-size: 24px;
+            content: "\e723";
+          }
+        }
+
+        #play {
+          padding: 4px;
+
+          &:before {
+            font-family: "themify";
+            font-size: 24px;
+            content: "\e6ad";
+          }
+        }
+
+        #pause {
+          padding: 4px;
+
+          &:before {
+            font-family: "themify";
+            font-size: 24px;
+            content: "\e6ae";
+          }
+        }
+
+        #next {
+          padding: 4px;
+
+          &:before {
+            font-family: "themify";
+            font-size: 24px;
+            content: "\e722";
+          }
+        }
+
+        #loop {
+          padding: 4px;
+          color: $inactive;
+
+          &:hover {
+            background: none;
+            color: $white;
+          }
+
+          &:before {
+            font-family: "themify";
+            font-size: 24px;
+            content: "\e698";
+          }
+        }
+
+        .hidden {
+          display: none;
+        }
+
+        .inactive {
+          color: $inactive;
+        }
+
+        .clicked {
+          color: $active;
+        }
+
+        .loop-active {
+          color: $active !important;
+        }
+      }
+    }
+  }
+}
