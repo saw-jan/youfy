@@ -80,6 +80,12 @@ function setSongTitle(song) {
     titleEl.innerText = song;
 }
 
+function streamAudio(audio) {
+    const player = document.getElementById("audio-player");
+    player.src = audio;
+    player.play();
+}
+
 async function YTsearch(searchText) {
     const searchParams = new URLSearchParams({
         search_query: searchText,
@@ -126,6 +132,11 @@ async function getVideoInfo(videoId) {
             audio_link = format.url;
             break;
         }
+    }
+    if (!audio_link) {
+        setTimeout(() => getVideoInfo(videoId), 300);
+    } else {
+        streamAudio(audio_link);
     }
 }
 
