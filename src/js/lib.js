@@ -72,6 +72,14 @@ function clickEffect(event) {
     }, 200);
 }
 
+function setSongTitle(song) {
+    const titleEl = document.getElementById("title");
+    const placeholderEl = document.getElementById("title-placeholder");
+    placeholderEl.classList.add("hidden");
+    titleEl.classList.remove("hidden");
+    titleEl.innerText = song;
+}
+
 async function YTsearch(searchText) {
     const searchParams = new URLSearchParams({
         search_query: searchText,
@@ -106,27 +114,28 @@ function getFirstVideo(html) {
 async function getVideoInfo(videoId) {
     const response = await fetch(`${VIDEO_URL}?v=${videoId}`);
     const html = await response.text();
-    console.log(html);
     videoInfo = getVideoDetails(html);
+
+    setSongTitle(videoInfo.videoDetails.title);
+
     const streams = videoInfo.streamingData.adaptiveFormats;
-    console.log(videoInfo.videoDetails.title);
     let audio_link = null;
     for (const format of streams) {
         if (format.mimeType.includes("audio")) {
+            // audio stream url
             audio_link = format.url;
-            console.log(format.url);
             break;
         }
     }
-    // await download(audio_link)
 }
 
 function getVideoDetails(html) {
-    const regex =
-        /var\sytInitialPlayerResponse\s=\s.*{.*}(?=;(\s)?<\/script>)/g;
+    const regex = /var ytInitialPlayerResponse = {.*}(?=;[\s\S]+<\/script>)/;
     const found = html.match(regex)[0];
-    console.log(found);
-    const json = found.replace("var ytInitialPlayerResponse = ", "");
+    // try again: found will have extra unwanted data
+    const playerResp = found.match(regex)[0];
+
+    const json = playerResp.replace("var ytInitialPlayerResponse = ", "");
     const respObj = JSON.parse(json);
     const { playabilityStatus, videoDetails, streamingData } = respObj;
     return { playabilityStatus, videoDetails, streamingData };

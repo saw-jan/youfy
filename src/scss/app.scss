@@ -145,12 +145,18 @@ body {
       justify-content: center;
       flex-direction: column;
 
-      #title {
+      #song-title {
         height: 100%;
         display: flex;
         align-items: center;
 
-        p {
+        #title-placeholder {
+          width: 100%;
+          height: 20px;
+          background: $gray;
+        }
+
+        #title {
           width: 200px;
           white-space: nowrap;
           overflow: hidden !important;
@@ -228,10 +234,6 @@ body {
           }
         }
 
-        .hidden {
-          display: none;
-        }
-
         .inactive {
           color: $inactive;
         }
@@ -245,5 +247,9 @@ body {
         }
       }
     }
+  }
+
+  .hidden {
+    display: none;
   }
 }
