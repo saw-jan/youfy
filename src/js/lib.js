@@ -6,6 +6,12 @@ const SEARCH_URL = "https://www.youtube.com/results";
 const VIDEO_URL = "https://www.youtube.com/watch";
 let isLoop = false;
 let isInit = true;
+const playlist = {
+    current: "",
+    previous: "",
+    next: "",
+    loop: false,
+};
 
 window.addEventListener("load", () => {
     const playBtn = document.getElementById("play");
@@ -21,29 +27,36 @@ window.addEventListener("load", () => {
     prevBtn.addEventListener("click", (event) => {
         if (!isInit) {
             clickEffect(event);
+            if (playlist.previous) {
+                getVideoInfo(playlist.previous);
+            } else {
+                isInit = true;
+            }
         }
     });
     // next button click event
     nextBtn.addEventListener("click", (event) => {
         clickEffect(event);
+        prevBtn.classList.remove("inactive");
+        getVideoInfo(playlist.next);
     });
     // play button click event
     playBtn.addEventListener("click", (event) => {
-        event.target.classList.add("hidden");
-        pauseBtn.classList.remove("hidden");
+        play();
     });
     // pause button click event
     pauseBtn.addEventListener("click", (event) => {
-        event.target.classList.add("hidden");
-        playBtn.classList.remove("hidden");
+        pause();
     });
     // loop button click event
     const loopBtn = document.getElementById("loop");
     loopBtn.addEventListener("click", (event) => {
         if (isLoop) {
             event.target.classList.remove("loop-active");
+            playlist.loop = false;
         } else {
             event.target.classList.add("loop-active");
+            playlist.loop = true;
         }
         isLoop = !isLoop;
     });
@@ -63,6 +76,16 @@ window.addEventListener("load", () => {
             await YTsearch(searchTerm);
         }
     });
+
+    // audio player
+    const player = document.getElementById("audio-player");
+    player.addEventListener("ended", () => {
+        if (playlist.loop) {
+            getVideoInfo(playlist.current);
+        } else {
+            getVideoInfo(playlist.next);
+        }
+    });
 });
 
 function clickEffect(event) {
@@ -72,12 +95,52 @@ function clickEffect(event) {
     }, 200);
 }
 
+function togglePlay() {
+    const playBtn = document.getElementById("play");
+    const pauseBtn = document.getElementById("pause");
+    playBtn.classList.add("hidden");
+    pauseBtn.classList.remove("hidden");
+}
+
+function togglePause() {
+    const playBtn = document.getElementById("play");
+    const pauseBtn = document.getElementById("pause");
+    playBtn.classList.remove("hidden");
+    pauseBtn.classList.add("hidden");
+}
+
 function setSongTitle(song) {
     const titleEl = document.getElementById("title");
     const placeholderEl = document.getElementById("title-placeholder");
     placeholderEl.classList.add("hidden");
     titleEl.classList.remove("hidden");
     titleEl.innerText = song;
+}
+
+function setThumbnail(thumbnail) {
+    const thumbnailEl = document.getElementById("cover");
+    thumbnailEl.style.background = `url('${thumbnail}')`;
+    return thumbnailEl;
+}
+
+function spin(element) {
+    element.classList.add("spin");
+}
+
+function pause() {
+    togglePause();
+    const thumbnailEl = document.getElementById("cover");
+    const player = document.getElementById("audio-player");
+    thumbnailEl.classList.remove("spin");
+    player.pause();
+}
+
+function play() {
+    togglePlay();
+    const thumbnailEl = document.getElementById("cover");
+    const player = document.getElementById("audio-player");
+    thumbnailEl.classList.add("spin");
+    player.play();
 }
 
 function streamAudio(audio) {
@@ -94,12 +157,13 @@ async function YTsearch(searchText) {
 
     const response = await fetch(`${SEARCH_URL}?${searchParams}`);
     const html = await response.text();
-    const video = getFirstVideo(html);
-    getVideoInfo(video.videoId);
+    const videoId = getFirstVideo(html);
+    getVideoInfo(videoId);
 }
 
 function getFirstVideo(html) {
-    let firstVideo = null;
+    let firstVideoId = null;
+    let nextVideoId = null;
 
     const regex = /var\sytInitialData\s=\s.*{.*}(?=;(\s)?<\/script>)/g;
     const found = html.match(regex)[0];
@@ -108,13 +172,24 @@ function getFirstVideo(html) {
     const contents =
         respObj.contents.twoColumnSearchResultsRenderer.primaryContents
             .sectionListRenderer.contents[0].itemSectionRenderer.contents;
+    let count = 0;
     for (const video of contents) {
-        if (video.hasOwnProperty("videoRenderer")) {
-            firstVideo = video;
+        if (count < 2) {
+            if (video.hasOwnProperty("videoRenderer")) {
+                if (count === 0) {
+                    firstVideoId = video.videoRenderer.videoId;
+                } else {
+                    nextVideoId = video.videoRenderer.videoId;
+                }
+                count++;
+            }
+        } else {
             break;
         }
     }
-    return firstVideo.videoRenderer;
+    playlist.current = firstVideoId;
+    playlist.next = nextVideoId;
+    return firstVideoId;
 }
 
 async function getVideoInfo(videoId) {
@@ -123,6 +198,8 @@ async function getVideoInfo(videoId) {
     videoInfo = getVideoDetails(html);
 
     setSongTitle(videoInfo.videoDetails.title);
+    const thumbnail = videoInfo.videoDetails.thumbnail.thumbnails[0].url;
+    const thumbnailEl = setThumbnail(thumbnail);
 
     const streams = videoInfo.streamingData.adaptiveFormats;
     let audio_link = null;
@@ -137,6 +214,8 @@ async function getVideoInfo(videoId) {
         setTimeout(() => getVideoInfo(videoId), 300);
     } else {
         streamAudio(audio_link);
+        togglePlay();
+        spin(thumbnailEl);
     }
 }
 
