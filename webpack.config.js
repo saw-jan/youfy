@@ -2,7 +2,7 @@ const HtmlWebPackPlugin = require("html-webpack-plugin");
 const path = require("path");
 
 module.exports = {
-    entry: ["./src/js/lib.js", "./src/scss/app.scss"],
+    entry: ["./src/js/index.js", "./src/scss/app.scss"],
     target: "electron-renderer",
     mode: "production",
     // devtool: "inline-source-map",

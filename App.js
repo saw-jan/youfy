@@ -13,7 +13,7 @@ const createWindow = () => {
         width: 400,
         height: 140,
         frame: false,
-        resizable: false,
+        // resizable: false,
         titleBarStyle: "hidden",
         webPreferences: {
             nodeIntegration: true,
