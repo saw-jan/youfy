@@ -1,6 +1,8 @@
-const fetch = require("cross-fetch");
 const { search, getVideoDetails } = require("../lib/yt");
 const { PLAYER, updatePlayer } = require("./player");
+let searchingInterval = null;
+let reqResolved = false;
+let isFirstReq = true;
 
 window.addEventListener("load", () => {
     // player controllers
@@ -54,18 +56,40 @@ window.addEventListener("load", () => {
 
     // search
     searchInput.addEventListener("keyup", async (event) => {
+        event.preventDefault();
+
         if (event.key === "Enter") {
-            event.preventDefault();
+            // [TODO] stop player
+
+            if (!isFirstReq && !reqResolved) {
+                return;
+            } else {
+                reqResolved = false;
+            }
+            isFirstReq = false;
+
             const searchTerm = event.target.value;
 
             // clear value and focus out
             event.target.value = "";
             event.target.blur();
 
+            searching();
+
             // search on YouTube
             const { title, thumbnail, audio, current, next } = await search(
                 searchTerm
             );
+
+            clearInterval(searchingInterval);
+            reqResolved = true;
+
+            if (!title) {
+                setSongTitle("[Not Found] Try Again!");
+                searchInput.focus();
+                return;
+            }
+
             setSongTitle(title);
             setThumbnail(thumbnail);
             streamAudio(audio);
@@ -123,6 +147,28 @@ function setThumbnail(thumbnail) {
     const thumbnailEl = document.getElementById("cover");
     thumbnailEl.style.background = `url('${thumbnail}')`;
     return thumbnailEl;
+}
+
+function searching() {
+    // search for 30 seconds
+    const searchTimeout = 30 * 1000;
+    let count = 0;
+    const startTime = new Date();
+    let elapsedTime = new Date();
+
+    searchingInterval = setInterval(function () {
+        setSongTitle("Searching" + ".".repeat(count));
+        count++;
+        if (count === 4) {
+            count = 0;
+        }
+        elapsedTime = new Date();
+
+        if (elapsedTime - startTime > searchTimeout) {
+            clearInterval(searchingInterval);
+            setSongTitle("[Error] Try again!");
+        }
+    }, 500);
 }
 
 function spin(element) {

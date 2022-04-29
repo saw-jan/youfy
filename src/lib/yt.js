@@ -18,8 +18,27 @@ export async function search(searchText) {
 
     const response = await fetch(`${SEARCH_URL}?${searchParams}`);
     const html = await response.text();
-    const videoId = parseFirstVideoId(html);
-    const song = getVideoDetails(videoId);
+
+    const song = {
+        title: null,
+        thumbnail: null,
+        audio: null,
+        current: null,
+        next: null,
+    };
+
+    try {
+        const videoId = parseFirstVideoId(html);
+        const { title, thumbnail, audio, current, next } =
+            await getVideoDetails(videoId);
+
+        song.title = title;
+        song.thumbnail = thumbnail;
+        song.audio = audio;
+        song.current = current;
+        song.next = next;
+    } catch (e) {}
+
     return song;
 }
 
@@ -43,7 +62,7 @@ export async function getVideoDetails(videoId) {
     if (!audio_link) {
         if (RECURSE.count < RECURSE.max) {
             RECURSE.count++;
-            const { audio_link: link } = await getVideoDetails(videoId);
+            const { audio: link } = await getVideoDetails(videoId);
             audio_link = link;
         }
     } else {

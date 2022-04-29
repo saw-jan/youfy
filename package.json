@@ -7,10 +7,9 @@
     "license": "MIT",
     "scripts": {
         "build": "webpack -c webpack.config.js",
-        "build:watch": "webpack -c webpack.config.js --watch",
-        "start": "npm run build && electron .",
+        "build:w": "webpack -c webpack.config.js --watch",
         "start:dev": "MODE=dev electron .",
-        "watch": "concurrently \"npm:build:watch\" \"npm:start:dev\""
+        "start": "concurrently \"npm:build:w\" \"npm:start:dev\""
     },
     "devDependencies": {
         "@babel/core": "^7.16.0",
