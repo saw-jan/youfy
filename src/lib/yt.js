@@ -60,8 +60,8 @@ export async function getVideoDetails(videoId) {
 
     // if no audio url then try again
     if (!audio_link) {
+        RECURSE.count++;
         if (RECURSE.count < RECURSE.max) {
-            RECURSE.count++;
             const { audio: link } = await getVideoDetails(videoId);
             audio_link = link;
         }
