@@ -1,8 +1,11 @@
 name: test-and-build
+
 on: [push, pull_request]
+
 jobs:
   test-and-build:
     runs-on: ubuntu-latest
+
     steps:
       - name: yarn
         uses: DerYeger/yarn-setup-action@master

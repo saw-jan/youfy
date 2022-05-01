@@ -1,10 +1,11 @@
-name: release
-on:
-  release:
-    types: [published, unpublished]
+name: release-app
+
+on: [release]
+
 jobs:
-  release:
+  release-app:
     runs-on: ubuntu-latest
+
     steps:
       - name: yarn
         uses: DerYeger/yarn-setup-action@master
