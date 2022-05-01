@@ -1,6 +1,8 @@
 name: release-app
 
-on: [release]
+on:
+  release:
+    types: [published]
 
 jobs:
   release-app:
