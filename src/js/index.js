@@ -21,27 +21,33 @@ window.addEventListener("load", () => {
     // disable previous button
     if (!PLAYER.previous) {
         prevBtn.classList.add("inactive");
-        searchInput.focus();
     }
+    searchInput.focus();
+
     // previous button click event
-    prevBtn.addEventListener("click", (event) => {
-        if (!PLAYER.previous) {
+    prevBtn.addEventListener("click", async (event) => {
+        if (PLAYER.previous) {
             clickEffect(event);
-            previousSong(PLAYER.previous);
+            await previousSong();
+
+            // disable if no any previous song
+            if (!PLAYER.previous) {
+                prevBtn.classList.add("inactive");
+            }
         }
     });
     // next button click event
     nextBtn.addEventListener("click", (event) => {
         clickEffect(event);
         prevBtn.classList.remove("inactive");
-        nextSong(PLAYER.next);
+        nextSong();
     });
     // play button click event
-    playBtn.addEventListener("click", (event) => {
+    playBtn.addEventListener("click", () => {
         play(playerEl);
     });
     // pause button click event
-    pauseBtn.addEventListener("click", (event) => {
+    pauseBtn.addEventListener("click", () => {
         pause(playerEl);
     });
     // loop button click event
@@ -111,14 +117,14 @@ window.addEventListener("load", () => {
         if (PLAYER.loop) {
             await getVideoDetails(PLAYER.current);
         } else {
-            nextSong(PLAYER.next);
+            nextSong();
         }
     });
 
     // try next if error to play
     playerEl.onerror = function () {
         PLAYER.errorCount++;
-        if (PLAYER.errorCount <= PLAYER.maxErrorCount) nextSong(PLAYER.next);
+        if (PLAYER.errorCount <= PLAYER.maxErrorCount) nextSong();
     };
 });
 
@@ -208,20 +214,28 @@ function streamAudio(audio) {
     play(player);
 }
 
-async function nextSong(songId) {
-    const { title, thumbnail, audio, current, next } = await getVideoDetails(
-        songId
+async function nextSong() {
+    const { title, thumbnail, audio, next } = await getVideoDetails(
+        PLAYER.next
     );
     setSongTitle(title);
     setThumbnail(thumbnail);
     streamAudio(audio);
-    updatePlayer({ previous: PLAYER.current, current, next });
+    return updatePlayer({
+        previous: PLAYER.current,
+        current: PLAYER.next,
+        next,
+    });
 }
 
-async function previousSong(songId) {
-    const { title, thumbnail, audio, current } = await getVideoDetails(songId);
+async function previousSong() {
+    const { title, thumbnail, audio } = await getVideoDetails(PLAYER.previous);
     setSongTitle(title);
     setThumbnail(thumbnail);
     streamAudio(audio);
-    updatePlayer({ previous: null, current: PLAYER.previous, next: current });
+    return updatePlayer({
+        previous: null,
+        current: PLAYER.previous,
+        next: PLAYER.current,
+    });
 }
