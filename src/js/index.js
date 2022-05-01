@@ -71,8 +71,8 @@ window.addEventListener("load", () => {
     searchInput.addEventListener("keyup", async (event) => {
         event.preventDefault();
 
-        if (event.key === "Enter") {
-            // [TODO] stop player
+        if (event.key === "Enter" && event.target.value !== "") {
+            const searchTerm = event.target.value;
 
             if (!isFirstReq && !reqResolved) {
                 return;
@@ -80,12 +80,6 @@ window.addEventListener("load", () => {
                 reqResolved = false;
             }
             isFirstReq = false;
-
-            const searchTerm = event.target.value;
-
-            // clear value and focus out
-            event.target.value = "";
-            event.target.blur();
 
             searching();
 
@@ -112,6 +106,10 @@ window.addEventListener("load", () => {
                 currentIdx: getCurrentHistoryLength(),
             });
             checkAndAddToHistory(current);
+
+            // clear value and focus out
+            event.target.value = "";
+            event.target.blur();
         }
     });
 
