@@ -1,11 +1,9 @@
-name: release-app
+name: build-release
 
-on:
-  release:
-    types: [published]
+on: [push, pull_request]
 
 jobs:
-  release-app:
+  build-release:
     runs-on: ubuntu-latest
 
     steps:
@@ -17,7 +15,7 @@ jobs:
       - name: build-src
         run: yarn build
 
-      - name: release
+      - name: build-and-release
         env:
           GH_TOKEN: ${{ github.token }}
         run: yarn release
