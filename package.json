@@ -3,7 +3,7 @@
     "version": "1.0.0",
     "description": "Minimal youtube audio player",
     "main": "App.js",
-    "author": "Sawjan G. (https://sajang.com.np)",
+    "author": "Sawjan G. <saw.jan.grg3e@gmail.com> (https://sajang.com.np)",
     "license": "MIT",
     "repository": {
         "type": "git",
@@ -15,8 +15,10 @@
     "scripts": {
         "build": "webpack -c webpack.config.js",
         "build:w": "webpack -c webpack.config.js --watch",
-        "start:dev": "MODE=dev electron .",
-        "start": "concurrently \"npm:build:w\" \"npm:start:dev\""
+        "start": "electron .",
+        "start:dev": "concurrently \"npm:build:w\" \"MODE=dev npm:start:dev\"",
+        "package": "electron-builder",
+        "postinstall": "electron-builder install-app-deps"
     },
     "devDependencies": {
         "@babel/core": "^7.16.0",
@@ -36,7 +38,42 @@
         "webpack": "^5.65.0",
         "webpack-cli": "^4.9.1"
     },
-    "dependencies": {
-        "cross-fetch": "^3.1.4"
+    "dependencies": {},
+    "build": {
+        "appId": "com.sawjang.youfy",
+        "productName": "Youfy",
+        "files": [
+            "./package.json",
+            "./App.js",
+            "./dist/*",
+            "!./node_modules/*",
+            "!./src/*"
+        ],
+        "directories": {
+            "output": "packages"
+        },
+        "copyright": "Copyright © 2022 Sawjan G.",
+        "linux": {
+            "category": "Audio",
+            "artifactName": "${productName}_v${version}_${os}_${arch}.${ext}",
+            "executableName": "youfy",
+            "icon": "./build/icon.icns",
+            "target": [
+                {
+                    "target": "deb",
+                    "arch": [
+                        "x64"
+                    ]
+                }
+            ]
+        },
+        "asar": true,
+        "publish": [
+            {
+                "provider": "github",
+                "owner": "saw-jan",
+                "repo": "youfy"
+            }
+        ]
     }
 }
