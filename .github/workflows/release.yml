@@ -16,4 +16,6 @@ jobs:
         run: yarn build
 
       - name: release
+        env:
+          GH_TOKEN: ${{ github.token }}
         run: yarn release
