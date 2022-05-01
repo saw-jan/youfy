@@ -4,6 +4,8 @@ let searchingInterval = null;
 let reqResolved = false;
 let isFirstReq = true;
 
+// elements
+
 window.addEventListener("load", () => {
     // player controllers
     const playBtn = document.getElementById("play");
@@ -102,7 +104,7 @@ window.addEventListener("load", () => {
         spin(thumbnailEl);
     });
     playerEl.addEventListener("pause", () => {
-        stopSpin(thumbnailEl);
+        changeAnimationState(thumbnailEl, "paused");
     });
     playerEl.addEventListener("ended", async () => {
         stopSpin(thumbnailEl);
@@ -179,6 +181,11 @@ function searching() {
 
 function spin(element) {
     element.classList.add("spin");
+    changeAnimationState(element, "running");
+}
+
+function changeAnimationState(element, state = "paused") {
+    element.style.animationPlayState = state;
 }
 
 function stopSpin(element) {
