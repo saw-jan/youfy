@@ -1,0 +1,13 @@
+name: test-and-build
+on: [push, pull_request]
+jobs:
+  tests:
+    runs-on: ubuntu-latest
+    steps:
+      - name: yarn
+        uses: DerYeger/yarn-setup-action@master
+        with:
+          node-version: 14
+
+      - name: build-src
+        run: yarn build
