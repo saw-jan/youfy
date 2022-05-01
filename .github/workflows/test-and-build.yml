@@ -1,7 +1,7 @@
 name: test-and-build
 on: [push, pull_request]
 jobs:
-  tests:
+  test-and-build:
     runs-on: ubuntu-latest
     steps:
       - name: yarn
@@ -11,3 +11,6 @@ jobs:
 
       - name: build-src
         run: yarn build
+
+      - name: build-electron-app
+        run: yarn package
