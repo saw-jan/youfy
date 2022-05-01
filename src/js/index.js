@@ -4,8 +4,12 @@ const {
     updatePlayer,
     historyOverflow,
     addToHistory,
-    removeOldestHistoryItem,
-    removeFromHistory,
+    removeOldestHistory,
+    hasPreviousHistory,
+    hasNextHistory,
+    getNextHistory,
+    getPreviousHistory,
+    getCurrentHistoryLength,
 } = require("./player");
 let searchingInterval = null;
 let reqResolved = false;
@@ -23,20 +27,16 @@ window.addEventListener("load", () => {
     const thumbnailEl = document.getElementById("cover");
     const searchInput = document.getElementById("search");
 
-    // disable previous button
-    if (!PLAYER.previous) {
-        prevBtn.classList.add("inactive");
-    }
     searchInput.focus();
 
     // previous button click event
     prevBtn.addEventListener("click", async (event) => {
-        if (PLAYER.previous) {
+        if (hasPreviousHistory()) {
             clickEffect(event);
             await previousSong();
 
             // disable if no any previous song
-            if (!PLAYER.previous) {
+            if (!hasPreviousHistory()) {
                 prevBtn.classList.add("inactive");
             }
         }
@@ -106,7 +106,11 @@ window.addEventListener("load", () => {
             setSongTitle(title);
             setThumbnail(thumbnail);
             streamAudio(audio);
-            updatePlayer({ previous: PLAYER.current, current, next });
+            updatePlayer({
+                current,
+                next,
+                currentIdx: getCurrentHistoryLength(),
+            });
             checkAndAddToHistory(current);
         }
     });
@@ -129,7 +133,6 @@ window.addEventListener("load", () => {
 
     // try next if error to play
     playerEl.onerror = function () {
-        removeFromHistory(PLAYER.current);
         PLAYER.errorCount++;
         if (PLAYER.errorCount <= PLAYER.maxErrorCount) nextSong();
     };
@@ -222,36 +225,45 @@ function streamAudio(audio) {
 }
 
 async function nextSong() {
+    let songID = PLAYER.next;
+    let fetchNext = true;
+    if (hasNextHistory()) {
+        songID = getNextHistory();
+        fetchNext = false;
+    }
     const { title, thumbnail, audio, next } = await getVideoDetails(
-        PLAYER.next
+        songID,
+        fetchNext
     );
     setSongTitle(title);
     setThumbnail(thumbnail);
     streamAudio(audio);
-    checkAndAddToHistory(PLAYER.next);
+
+    if (!hasNextHistory()) checkAndAddToHistory(songID);
+
     return updatePlayer({
-        previous: PLAYER.current,
-        current: PLAYER.next,
-        next,
+        currentIdx: PLAYER.currentIdx + 1,
+        current: songID,
+        next: next ? next : PLAYER.next,
     });
 }
 
 async function previousSong() {
-    const { title, thumbnail, audio } = await getVideoDetails(PLAYER.previous);
+    const songID = getPreviousHistory();
+    const { title, thumbnail, audio } = await getVideoDetails(songID, false);
     setSongTitle(title);
     setThumbnail(thumbnail);
     streamAudio(audio);
-    checkAndAddToHistory(PLAYER.previous);
+
     return updatePlayer({
-        previous: null,
-        current: PLAYER.previous,
-        next: PLAYER.current,
+        currentIdx: PLAYER.currentIdx ? PLAYER.currentIdx - 1 : 0,
+        current: songID,
     });
 }
 
 function checkAndAddToHistory(songId) {
     if (historyOverflow()) {
-        removeOldestHistoryItem();
+        removeOldestHistory();
         addToHistory(songId);
     } else {
         addToHistory(songId);
