@@ -1,10 +1,15 @@
 const { search, getVideoDetails } = require("../lib/yt");
-const { PLAYER, updatePlayer } = require("./player");
+const {
+    PLAYER,
+    updatePlayer,
+    historyOverflow,
+    addToHistory,
+    removeOldestHistoryItem,
+    removeFromHistory,
+} = require("./player");
 let searchingInterval = null;
 let reqResolved = false;
 let isFirstReq = true;
-
-// elements
 
 window.addEventListener("load", () => {
     // player controllers
@@ -102,6 +107,7 @@ window.addEventListener("load", () => {
             setThumbnail(thumbnail);
             streamAudio(audio);
             updatePlayer({ previous: PLAYER.current, current, next });
+            checkAndAddToHistory(current);
         }
     });
 
@@ -123,6 +129,7 @@ window.addEventListener("load", () => {
 
     // try next if error to play
     playerEl.onerror = function () {
+        removeFromHistory(PLAYER.current);
         PLAYER.errorCount++;
         if (PLAYER.errorCount <= PLAYER.maxErrorCount) nextSong();
     };
@@ -221,6 +228,7 @@ async function nextSong() {
     setSongTitle(title);
     setThumbnail(thumbnail);
     streamAudio(audio);
+    checkAndAddToHistory(PLAYER.next);
     return updatePlayer({
         previous: PLAYER.current,
         current: PLAYER.next,
@@ -233,9 +241,19 @@ async function previousSong() {
     setSongTitle(title);
     setThumbnail(thumbnail);
     streamAudio(audio);
+    checkAndAddToHistory(PLAYER.previous);
     return updatePlayer({
         previous: null,
         current: PLAYER.previous,
         next: PLAYER.current,
     });
+}
+
+function checkAndAddToHistory(songId) {
+    if (historyOverflow()) {
+        removeOldestHistoryItem();
+        addToHistory(songId);
+    } else {
+        addToHistory(songId);
+    }
 }

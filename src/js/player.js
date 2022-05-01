@@ -9,6 +9,10 @@ const PLAYER = {
     maxErrorCount: 20,
 };
 
+// song history: max to 20
+const MAX_HISTORY = 20;
+const history = [];
+
 const updatePlayer = (settings = {}) => {
     validateSetting(settings);
 
@@ -27,7 +31,30 @@ const validateSetting = (settings) => {
     }
 };
 
+const addToHistory = (songId) => {
+    history.push(songId);
+    return history;
+};
+
+const removeFromHistory = (songId) => {
+    history.splice(history.indexOf(songId), 1);
+    return history;
+};
+
+const removeOldestHistoryItem = (songId) => {
+    history.shift(songId);
+    return history;
+};
+
+const historyOverflow = () => {
+    return history.length >= MAX_HISTORY;
+};
+
 module.exports = {
     PLAYER,
     updatePlayer,
+    addToHistory,
+    removeFromHistory,
+    removeOldestHistoryItem,
+    historyOverflow,
 };
