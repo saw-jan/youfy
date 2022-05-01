@@ -9,6 +9,7 @@ const {
     hasNextHistory,
     getNextHistory,
     getPreviousHistory,
+    getCurrent,
     getCurrentHistoryLength,
 } = require("./player");
 let searchingInterval = null;
@@ -123,9 +124,11 @@ window.addEventListener("load", () => {
     playerEl.addEventListener("ended", async () => {
         stopSpin(thumbnailEl);
         if (PLAYER.loop) {
-            await getVideoDetails(PLAYER.current);
+            const { audio } = getCurrent();
+            streamAudio(audio);
         } else {
             nextSong();
+            prevBtn.classList.remove("inactive");
         }
     });
 

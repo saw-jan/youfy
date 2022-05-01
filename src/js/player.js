@@ -70,6 +70,10 @@ const getNextHistory = () => {
     return history[PLAYER.currentIdx + 1];
 };
 
+const getCurrent = () => {
+    return history[PLAYER.currentIdx];
+};
+
 const getCurrentHistoryLength = () => {
     return history.length;
 };
@@ -86,5 +90,6 @@ module.exports = {
     hasNextHistory,
     getPreviousHistory,
     getNextHistory,
+    getCurrent,
     getCurrentHistoryLength,
 };
