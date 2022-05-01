@@ -1,9 +1,13 @@
 const FILTER = "EgIQAQ%253D%253D"; // only video
-const SEARCH_URL = "https://www.youtube.com/results";
-const VIDEO_URL = "https://www.youtube.com/watch";
+const Y_URL = "https://www.youtube.com";
+const SEARCH_URL = `${Y_URL}/results`;
+const VIDEO_URL = `${Y_URL}/watch`;
 const regex = {
     playlist: /var\sytInitialData\s=\s.*{.*}(?=;(\s)?<\/script>)/,
     video: /var ytInitialPlayerResponse = {.*}(?=;[\s\S]+<\/script>)/,
+    decoder: /function\(a\){a=a.split\(""\);(.*)};/,
+    decrypter: /var [a-zA-Z]{2}={([a-zA-Z]{2}:function[\s\S]*?)}(?=;)/,
+    player: /(?<=src=")\/s\/player\/(.*)en_US\/base.js(?=")/,
 };
 const RECURSE = {
     count: 0,
@@ -49,13 +53,21 @@ export async function getVideoDetails(videoId) {
     const nextVideoId = getNextSong(html);
 
     const streams = videoInfo.streamingData.adaptiveFormats;
+    const aStream = getAudioStream(streams);
+
     let audio_link = null;
-    for (const format of streams) {
-        if (format.mimeType.includes("audio")) {
-            // audio stream url
-            audio_link = format.url;
-            break;
-        }
+
+    if (aStream.url) {
+        audio_link = aStream.url;
+    } else {
+        const scriptUrl = getPlayerScriptLink(html);
+        const {
+            url,
+            sigParam,
+            signature: encryptedSig,
+        } = getCipherParts(aStream.signatureCipher);
+        const signature = await decypher(encryptedSig, scriptUrl);
+        audio_link = constructStreamUrl(url, sigParam, signature);
     }
 
     // if no audio url then try again
@@ -112,9 +124,63 @@ function getNextSong(html) {
     const found = html.match(regex.playlist)[0];
     const json = found.replace("var ytInitialData = ", "");
     const respObj = JSON.parse(json);
-    // console.log(respObj.contents.twoColumnWatchNextResults);
     const nextSongId =
         respObj.contents.twoColumnWatchNextResults.secondaryResults
             .secondaryResults.results[0].compactVideoRenderer.videoId;
     return nextSongId;
+}
+
+function getAudioStream(streams) {
+    let audioStream = {};
+    for (const stream of streams) {
+        if (stream.mimeType.includes("audio")) {
+            audioStream = stream;
+            break;
+        }
+    }
+
+    return audioStream;
+}
+
+function getPlayerScriptLink(html) {
+    let url = `${Y_URL}/s/player/9cdfefcf/player_ias.vflset/en_US/base.js`;
+
+    const path = html.match(regex.player);
+
+    if (path !== null) {
+        url = `${Y_URL}${path[0]}`;
+    }
+    return url;
+}
+
+function getCipherParts(cipher) {
+    const c = cipher.split("&");
+    return {
+        signature: c[0].replace("s=", ""),
+        sigParam: c[1].replace(/sp=/, ""),
+        url: c[c.length - 1].replace("url=", ""),
+    };
+}
+
+function constructStreamUrl(url, sp, sig) {
+    const streamUrl = decodeURIComponent(url);
+
+    return `${streamUrl}&${sp}=${sig}`;
+}
+
+async function decypher(signature, scriptUrl) {
+    const playerScript = await fetch(scriptUrl).then((res) => res.text());
+
+    const decodeFuncMatch = playerScript.match(regex.decoder);
+    const decryptMatch = playerScript.match(regex.decrypter);
+
+    if (decodeFuncMatch !== null && decryptMatch !== null) {
+        const objString = decryptMatch[0].replace(/\n/g, "");
+
+        const decodeFuncString = decodeFuncMatch[0]
+            .replace("function(", "function d(")
+            .replace("){", `){${objString};`);
+        const decode = new Function(`${decodeFuncString} return d`);
+        return decode()(decodeURIComponent(signature));
+    }
 }

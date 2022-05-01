@@ -112,6 +112,11 @@ window.addEventListener("load", () => {
             nextSong(PLAYER.next);
         }
     });
+
+    // TODO: limit next song
+    // playerEl.onerror = function () {
+    //     nextSong(PLAYER.next);
+    // };
 });
 
 function clickEffect(event) {
