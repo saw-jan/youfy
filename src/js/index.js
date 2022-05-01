@@ -1,3 +1,4 @@
+const { ipcRenderer: ipc } = require("electron");
 const { search, getVideoDetails } = require("../lib/yt");
 const {
     PLAYER,
@@ -137,6 +138,14 @@ window.addEventListener("load", () => {
         PLAYER.errorCount++;
         if (PLAYER.errorCount <= PLAYER.maxErrorCount) nextSong();
     };
+
+    // title bar controls
+    document.getElementById("ico-minimize").addEventListener("click", () => {
+        ipc.invoke("minimize");
+    });
+    document.getElementById("ico-close").addEventListener("click", () => {
+        ipc.invoke("close");
+    });
 });
 
 function clickEffect(event) {

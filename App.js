@@ -1,4 +1,4 @@
-const { app, BrowserWindow } = require("electron");
+const { app, BrowserWindow, ipcMain } = require("electron");
 const path = require("path");
 
 // enable live reload in 'dev' mode
@@ -13,15 +13,23 @@ const createWindow = () => {
         width: 400,
         height: 140,
         frame: false,
-        // resizable: false,
+        resizable: false,
         titleBarStyle: "hidden",
         webPreferences: {
             nodeIntegration: true,
-            devTools: true,
+            contextIsolation: false,
         },
     });
 
     window.loadFile(path.join(__dirname, "dist", "index.html"));
+
+    // IPC channels
+    ipcMain.handle("minimize", () => {
+        window.minimize();
+    });
+    ipcMain.handle("close", () => {
+        window.close();
+    });
 };
 
 app.whenReady().then(() => {
