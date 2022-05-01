@@ -113,10 +113,11 @@ window.addEventListener("load", () => {
         }
     });
 
-    // TODO: limit next song
-    // playerEl.onerror = function () {
-    //     nextSong(PLAYER.next);
-    // };
+    // try next if error to play
+    playerEl.onerror = function () {
+        PLAYER.errorCount++;
+        if (PLAYER.errorCount <= PLAYER.maxErrorCount) nextSong(PLAYER.next);
+    };
 });
 
 function clickEffect(event) {
@@ -155,7 +156,7 @@ function setThumbnail(thumbnail) {
 }
 
 function searching() {
-    // search for 30 seconds
+    // wait for 30 seconds
     const searchTimeout = 30 * 1000;
     let count = 0;
     const startTime = new Date();
@@ -171,7 +172,7 @@ function searching() {
 
         if (elapsedTime - startTime > searchTimeout) {
             clearInterval(searchingInterval);
-            setSongTitle("[Error] Try again!");
+            setSongTitle("[Network Error] Check your internet connection!");
         }
     }, 500);
 }

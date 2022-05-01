@@ -3,6 +3,8 @@ const PLAYER = {
     previous: null,
     next: null,
     loop: false,
+    errorCount: 0,
+    maxErrorCount: 20,
 };
 
 const updatePlayer = (settings = {}) => {
