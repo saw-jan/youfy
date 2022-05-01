@@ -105,7 +105,7 @@ window.addEventListener("load", () => {
                 next,
                 currentIdx: getCurrentHistoryLength(),
             });
-            checkAndAddToHistory(current);
+            checkAndAddToHistory({ current, title, thumbnail, audio });
 
             // clear value and focus out
             event.target.value = "";
@@ -223,47 +223,52 @@ function streamAudio(audio) {
 }
 
 async function nextSong() {
-    let songID = PLAYER.next;
-    let fetchNext = true;
+    let song = {};
     if (hasNextHistory()) {
-        songID = getNextHistory();
-        fetchNext = false;
+        song = getNextHistory();
+    } else {
+        song = await getVideoDetails(PLAYER.next);
     }
-    const { title, thumbnail, audio, next } = await getVideoDetails(
-        songID,
-        fetchNext
-    );
+
+    const { title, thumbnail, audio, current } = song;
+
     setSongTitle(title);
     setThumbnail(thumbnail);
     streamAudio(audio);
 
-    if (!hasNextHistory()) checkAndAddToHistory(songID);
+    if (!hasNextHistory()) {
+        checkAndAddToHistory({
+            current,
+            title,
+            thumbnail,
+            audio,
+        });
+    }
 
     return updatePlayer({
         currentIdx: PLAYER.currentIdx + 1,
-        current: songID,
-        next: next ? next : PLAYER.next,
+        current,
+        next: song.next ? song.next : PLAYER.next,
     });
 }
 
 async function previousSong() {
-    const songID = getPreviousHistory();
-    const { title, thumbnail, audio } = await getVideoDetails(songID, false);
+    const { title, thumbnail, audio, current } = getPreviousHistory();
     setSongTitle(title);
     setThumbnail(thumbnail);
     streamAudio(audio);
 
     return updatePlayer({
         currentIdx: PLAYER.currentIdx ? PLAYER.currentIdx - 1 : 0,
-        current: songID,
+        current,
     });
 }
 
-function checkAndAddToHistory(songId) {
+function checkAndAddToHistory(song) {
     if (historyOverflow()) {
         removeOldestHistory();
-        addToHistory(songId);
+        addToHistory(song);
     } else {
-        addToHistory(songId);
+        addToHistory(song);
     }
 }

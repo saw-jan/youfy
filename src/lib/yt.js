@@ -46,11 +46,11 @@ export async function search(searchText) {
     return song;
 }
 
-export async function getVideoDetails(videoId, fetchNext = true) {
+export async function getVideoDetails(videoId) {
     const response = await fetch(`${VIDEO_URL}?v=${videoId}`);
     const html = await response.text();
     const videoInfo = parseVideoDetails(html);
-    const nextVideoId = fetchNext ? getNextSong(html) : null;
+    const nextVideoId = getNextSong(html);
 
     const streams = videoInfo.streamingData.adaptiveFormats;
     const aStream = getAudioStream(streams);
