@@ -11,10 +11,10 @@ jobs:
   upload-artifacts:
     runs-on: ubuntu-latest
 
+    steps:
       - name: upload-artifacts
         uses: Roang-zero1/github-upload-release-artifacts-action@master
         env:
           GH_TOKEN: ${{ github.token }}
         with:
-          args:
-            - packages/executables/
+          args: packages/executables/
