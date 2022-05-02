@@ -114,6 +114,10 @@ window.addEventListener("load", () => {
             });
             checkAndAddToHistory({ current, title, thumbnail, audio });
 
+            // activate controllers
+            playBtn.classList.remove("inactive");
+            nextBtn.classList.remove("inactive");
+
             // clear value and focus out
             event.target.value = "";
             event.target.blur();
