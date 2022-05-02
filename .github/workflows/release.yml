@@ -1,0 +1,20 @@
+name: build-release
+
+on:
+  release:
+    types: [published]
+
+jobs:
+  build:
+    uses: ./.github/workflows/build-template.yml
+
+  upload-artifacts:
+    runs-on: ubuntu-latest
+
+      - name: upload-artifacts
+        uses: Roang-zero1/github-upload-release-artifacts-action@master
+        env:
+          GH_TOKEN: ${{ github.token }}
+        with:
+          args:
+            - packages/executables/

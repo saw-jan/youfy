@@ -18,7 +18,6 @@
         "start": "electron .",
         "start:dev": "concurrently \"npm:build:w\" \"MODE=dev npm:start:dev\"",
         "package": "electron-builder build -p never",
-        "release": "electron-builder",
         "postinstall": "electron-builder install-app-deps"
     },
     "devDependencies": {
@@ -39,7 +38,6 @@
         "webpack": "^5.65.0",
         "webpack-cli": "^4.9.1"
     },
-    "dependencies": {},
     "build": {
         "appId": "com.sawjang.youfy",
         "productName": "Youfy",

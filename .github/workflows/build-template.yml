@@ -1,13 +1,10 @@
-name: build-release
+name: build
 
 on:
-  push:
-  pull_request:
-    branches:
-      - "master"
+  workflow_call:
 
 jobs:
-  build-release:
+  build:
     runs-on: ubuntu-latest
 
     steps:
@@ -19,7 +16,5 @@ jobs:
       - name: build-src
         run: yarn build
 
-      - name: build-and-release
-        env:
-          GH_TOKEN: ${{ github.token }}
-        run: yarn release
+      - name: build-app
+        run: yarn package
