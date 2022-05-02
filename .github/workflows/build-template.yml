@@ -23,6 +23,6 @@ jobs:
         if: github.event_name == 'release' && github.event.action == 'created'
         uses: actions/upload-artifact@v3
         with:
-          name: executables
-          path: packages/executables/
+          name: artifacts
+          path: packages/artifacts/
           retention-days: 1

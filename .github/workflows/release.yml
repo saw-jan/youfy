@@ -15,12 +15,12 @@ jobs:
       - name: download-artifacts
         uses: actions/download-artifact@v3
         with:
-          name: executables
-          path: packages/executables/
+          name: artifacts
+          path: artifacts/
 
       - name: release-artifacts
         uses: Roang-zero1/github-upload-release-artifacts-action@master
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         with:
-          args: packages/executables/
+          args: artifacts/
