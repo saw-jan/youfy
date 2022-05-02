@@ -55,7 +55,7 @@
         "copyright": "Copyright © 2022 Sawjan G.",
         "linux": {
             "category": "Audio",
-            "artifactName": "${productName}_v${version}_${os}_${arch}.${ext}",
+            "artifactName": "${name}_${os}_${arch}.${ext}",
             "executableName": "youfy",
             "icon": "./build/icon.icns",
             "target": [
