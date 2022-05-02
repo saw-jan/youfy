@@ -16,11 +16,11 @@ jobs:
         uses: actions/download-artifact@v3
         with:
           name: artifacts
-          path: artifacts/
+          path: packages/artifacts/
 
       - name: release-artifacts
         uses: Roang-zero1/github-upload-release-artifacts-action@master
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         with:
-          args: artifacts/
+          args: packages/artifacts/
