@@ -5,14 +5,10 @@ on:
     types: [published]
 
 jobs:
-  build:
+  build-release:
     uses: ./.github/workflows/build-template.yml
 
-  upload-artifacts:
-    runs-on: ubuntu-latest
-    needs: build
     steps:
-      - run: ls
       - name: upload-artifacts
         uses: Roang-zero1/github-upload-release-artifacts-action@master
         env:
