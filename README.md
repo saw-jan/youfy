@@ -19,8 +19,6 @@
 
 #### User Interface
 
-<br />
-
 ![ui](./build/youfy-ui.jpg)
 
 ### Downloads
@@ -31,5 +29,9 @@
 
   Installation:
 
-  1.  Make executable `sudo chmod +x ./youfy_linux_x.deb`
-  2.  Install `sudo apt install ./youfy_linux_x.deb`
+  1.  Make executable: `sudo chmod +x ./youfy_linux_x.deb`
+  2.  Install: `sudo apt install ./youfy_linux_x.deb`
+
+#### Windows
+
+- Coming soon
