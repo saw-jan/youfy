@@ -19,8 +19,8 @@ jobs:
           path: packages/artifacts/
 
       - name: release-artifacts
-        uses: Roang-zero1/github-upload-release-artifacts-action@master
+        uses: fnkr/github-action-ghr@v1
         env:
+          GHR_PATH: packages/artifacts/
+          GHR_REPLACE: true
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-        with:
-          args: packages/artifacts/
