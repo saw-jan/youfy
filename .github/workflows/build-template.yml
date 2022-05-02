@@ -19,7 +19,8 @@ jobs:
       - name: build-app
         run: yarn package
 
-      - name: upload
+      - name: upload-artifacts
+        if: github.event_name == 'release' && github.event.action == 'created'
         uses: actions/upload-artifact@v3
         with:
           name: executables
