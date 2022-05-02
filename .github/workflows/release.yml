@@ -5,11 +5,20 @@ on:
     types: [published]
 
 jobs:
-  build-release:
+  build:
     uses: ./.github/workflows/build-template.yml
 
+  upload-artifacts:
+    runs-on: ubuntu-latest
+    needs: build
     steps:
-      - name: upload-artifacts
+      - name: download-artifacts
+        uses: actions/download-artifact@v3
+        with:
+          name: executables
+          path: packages/executables/
+
+      - name: release-artifacts
         uses: Roang-zero1/github-upload-release-artifacts-action@master
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}

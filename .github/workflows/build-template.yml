@@ -18,3 +18,10 @@ jobs:
 
       - name: build-app
         run: yarn package
+
+      - name: upload
+        uses: actions/upload-artifact@v3
+        with:
+          name: executables
+          path: packages/executables/
+          retention-days: 1
