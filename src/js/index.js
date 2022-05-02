@@ -6,6 +6,7 @@ const {
     historyOverflow,
     addToHistory,
     removeOldestHistory,
+    hasHistory,
     hasPreviousHistory,
     hasNextHistory,
     getNextHistory,
@@ -45,13 +46,17 @@ window.addEventListener("load", () => {
     });
     // next button click event
     nextBtn.addEventListener("click", (event) => {
-        clickEffect(event);
-        prevBtn.classList.remove("inactive");
-        nextSong();
+        if (hasHistory()) {
+            clickEffect(event);
+            prevBtn.classList.remove("inactive");
+            nextSong();
+        }
     });
     // play button click event
     playBtn.addEventListener("click", () => {
-        play(playerEl);
+        if (hasHistory()) {
+            play(playerEl);
+        }
     });
     // pause button click event
     pauseBtn.addEventListener("click", () => {
