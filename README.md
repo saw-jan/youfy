@@ -6,10 +6,18 @@
 
 <div align="center">
 
-![GitHub Workflow Status (branch)](https://img.shields.io/github/workflow/status/saw-jan/youfy/build/master?style=for-the-badge)
-![GitHub](https://img.shields.io/github/license/saw-jan/youfy?color=yellow&style=for-the-badge)
-![GitHub release (latest by date)](https://img.shields.io/github/v/release/saw-jan/youfy?color=green&style=for-the-badge)
-[![GitHub issues](https://img.shields.io/github/issues/saw-jan/youfy?color=blue&style=for-the-badge)](https://github.com/saw-jan/youfy/issues)
+<a href="https://github.com/saw-jan/youfy/actions">
+    <img src="https://img.shields.io/github/workflow/status/saw-jan/youfy/build/master?style=for-the-badge" />
+</a>
+<a href="https://github.com/saw-jan/youfy/blob/master/LICENSE">
+    <img src="https://img.shields.io/github/license/saw-jan/youfy?color=yellow&style=for-the-badge" />
+</a>
+<a href="https://github.com/saw-jan/youfy/releases">
+    <img src="https://img.shields.io/github/v/release/saw-jan/youfy?color=green&style=for-the-badge" />
+</a>
+<a href="https://github.com/saw-jan/youfy/issues">
+    <img src="https://img.shields.io/github/issues/saw-jan/youfy?color=blue&style=for-the-badge" />
+</a>
 
 </div>
 
