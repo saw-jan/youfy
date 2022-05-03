@@ -6,7 +6,8 @@ const regex = {
     playlist: /var\sytInitialData\s=\s.*{.*}(?=;(\s)?<\/script>)/,
     video: /var ytInitialPlayerResponse = {.*}(?=;[\s\S]+<\/script>)/,
     decoder: /function\(a\){a=a.split\(""\);(.*)};/,
-    decrypter: /var [a-zA-Z]{2}={([a-zA-Z]{2}:function[\s\S]*?)}(?=;)/,
+    decrypter:
+        /var [a-zA-Z]{2}={([a-zA-Z0-9]{2}:function\([a-zA-Z,]+\){.*}(,[\n\r])?){3}}(?=;)/,
     player: /(?<=src=")\/s\/player\/(.*)en_US\/base.js(?=")/,
 };
 const RECURSE = {
