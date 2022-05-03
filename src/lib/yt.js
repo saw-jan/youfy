@@ -174,7 +174,6 @@ async function decypher(signature, scriptUrl) {
 
     const decodeFuncMatch = playerScript.match(regex.decoder);
     const decryptMatch = playerScript.match(regex.decrypter);
-    console.log(decryptMatch);
 
     if (decodeFuncMatch !== null && decryptMatch !== null) {
         const objString = decryptMatch[0].replace(/\n/g, "");
