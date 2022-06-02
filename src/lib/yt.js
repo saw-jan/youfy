@@ -7,7 +7,7 @@ const regex = {
     video: /var ytInitialPlayerResponse = {.*}(?=;[\s\S]+<\/script>)/,
     decoder: /function\(a\){a=a.split\(""\);(.*)};/,
     decrypter:
-        /var [a-zA-Z]{2}={([a-zA-Z0-9]{2}:function\([a-zA-Z,]+\){.*}(,[\n\r])?){3}}(?=;)/,
+        /var [a-zA-Z$_]{1}[a-zA-Z$_0-9]{1}={([a-zA-Z0-9]{2}:function\([a-zA-Z,]+\){.*}(,[\n\r])?){3}}(?=;)/,
     player: /(?<=src=")\/s\/player\/(.*)en_US\/base.js(?=")/,
 };
 const RECURSE = {
