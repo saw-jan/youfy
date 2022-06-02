@@ -6,7 +6,7 @@ const PLAYER = {
     next: null,
     loop: false,
     errorCount: 0,
-    maxErrorCount: 20,
+    maxErrorCount: 10,
 };
 
 // song history: max to 20
