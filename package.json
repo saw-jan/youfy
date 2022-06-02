@@ -16,7 +16,7 @@
         "build": "webpack -c webpack.config.js",
         "build:w": "webpack -c webpack.config.js --watch",
         "start": "npm run build && electron .",
-        "start:dev": "concurrently \"npm:build:w\" \"MODE=dev npm:start:dev\"",
+        "start:dev": "concurrently \"npm:build:w\" \"MODE=dev electron .\"",
         "package": "electron-builder build -p never",
         "postinstall": "electron-builder install-app-deps"
     },
