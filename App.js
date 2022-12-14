@@ -1,5 +1,7 @@
 const { app, BrowserWindow, ipcMain } = require("electron");
 const path = require("path");
+const { existsSync, mkdirSync, writeFileSync } = require("fs");
+const { getConfigPath } = require("./utils/system");
 
 const windowConfig = {
     width: 400,
@@ -38,6 +40,7 @@ const createWindow = () => {
 };
 
 app.whenReady().then(() => {
+    initializeConfig();
     createWindow();
 
     app.on("activate", () => {
@@ -52,3 +55,13 @@ app.on("window-all-closed", () => {
         app.quit();
     }
 });
+
+const initializeConfig = () => {
+    if (!existsSync(getConfigPath())) {
+        mkdirSync(getConfigPath(), { recursive: true });
+    }
+    const configFile = path.join(getConfigPath(), "config.json");
+    if (!existsSync(configFile)) {
+        writeFileSync(configFile, JSON.stringify({}));
+    }
+};
