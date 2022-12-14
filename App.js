@@ -1,7 +1,7 @@
 const { app, BrowserWindow, ipcMain } = require("electron");
 const path = require("path");
 const { existsSync, mkdirSync, writeFileSync } = require("fs");
-const { getConfigPath } = require("./utils/system");
+const { getConfigPath, isMac } = require("./utils/system");
 
 const windowConfig = {
     width: 400,
@@ -51,7 +51,7 @@ app.whenReady().then(() => {
 });
 
 app.on("window-all-closed", () => {
-    if (process.platform !== "darwin") {
+    if (isMac()) {
         app.quit();
     }
 });
