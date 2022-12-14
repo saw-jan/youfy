@@ -4,7 +4,7 @@ const SEARCH_URL = `${Y_URL}/results`;
 const VIDEO_URL = `${Y_URL}/watch`;
 const regex = {
     playlist: /var\sytInitialData\s=\s.*{.*}(?=;(\s)?<\/script>)/,
-    video: /var ytInitialPlayerResponse = {.*}(?=;[\s\S]+<\/script>)/,
+    video: /var\sytInitialPlayerResponse = {.*}(?=;[\s\S]+<\/script>)/,
     decoder: /function\(a\){a=a.split\(""\);(.*)};/,
     decrypter:
         /var [a-zA-Z$_]{1}[a-zA-Z$_0-9]{1}={([a-zA-Z0-9]{2}:function\([a-zA-Z,]+\){.*}(,[\n\r])?){3}}(?=;)/,
@@ -113,7 +113,7 @@ function parseVideoDetails(html) {
     const found = html.match(regex.video)[0];
     // TODO: revisit the regex
     // try again: found will have extra unwanted data
-    const playerResp = found.match(regex.video)[0];
+    const playerResp = found.match(regex.video) ?? found;
 
     const json = playerResp.replace("var ytInitialPlayerResponse = ", "");
     const respObj = JSON.parse(json);
