@@ -46,6 +46,7 @@
             "./package.json",
             "./App.js",
             "./dist/*",
+            "./utils/*",
             "!./node_modules/*",
             "!./src/*"
         ],
