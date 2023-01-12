@@ -1,6 +1,6 @@
 {
     "name": "youfy",
-    "version": "1.0.1",
+    "version": "1.0.2",
     "description": "Minimal youtube audio player",
     "main": "App.js",
     "author": "Sawjan G. <saw.jan.grg3e@gmail.com> (https://sajang.com.np)",
