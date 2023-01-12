@@ -111,9 +111,10 @@ function parseFirstVideoId(html) {
 
 function parseVideoDetails(html) {
     const found = html.match(regex.video)[0];
-    // TODO: revisit the regex
-    // try again: found will have extra unwanted data
-    const playerResp = found ?? found.match(regex.video);
+    // try to parse again
+    const playerResp = found.match(regex.video)
+        ? found.match(regex.video)[0]
+        : found;
 
     const json = playerResp.replace("var ytInitialPlayerResponse = ", "");
     const respObj = JSON.parse(json);
