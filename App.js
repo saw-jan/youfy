@@ -6,6 +6,8 @@ const { getConfigPath, isMac } = require("./utils/system");
 const windowConfig = {
     width: 400,
     height: 140,
+    minWidth: 400,
+    minHeight: 140,
     frame: false,
     resizable: false,
     titleBarStyle: "hidden",
