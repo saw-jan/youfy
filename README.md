@@ -27,7 +27,7 @@
 
 #### User Interface
 
-![ui-startup](./img/youfy-startup.jpg) &nbsp; ![ui-action](./img/youfy-action.jpg)
+![ui-startup](./img/youfy-startup.webp) &nbsp; ![ui-action](./img/youfy-action.webp)
 
 ### Downloads
 
