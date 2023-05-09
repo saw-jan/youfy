@@ -7,7 +7,7 @@
 <div align="center">
 
 <a href="https://github.com/saw-jan/youfy/actions">
-    <img src="https://img.shields.io/github/workflow/status/saw-jan/youfy/build/master?style=for-the-badge" />
+    <img src="https://img.shields.io/github/actions/workflow/status/saw-jan/youfy/build.yml?style=for-the-badge" />
 </a>
 <a href="https://github.com/saw-jan/youfy/blob/master/LICENSE">
     <img src="https://img.shields.io/github/license/saw-jan/youfy?color=yellow&style=for-the-badge" />
