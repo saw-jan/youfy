@@ -1,17 +1,17 @@
 const { difference } = require("lodash");
 
 const PLAYER = {
-    currentIdx: 0,
-    current: null,
+    id: null,
     next: null,
     loop: false,
     errorCount: 0,
     maxErrorCount: 10,
 };
 
+let PLAYLIST = new Map();
+
 // song history: max to 20
 const MAX_HISTORY = 20;
-const history = [];
 
 const updatePlayer = (settings = {}) => {
     validateSetting(settings);
@@ -31,51 +31,66 @@ const validateSetting = (settings) => {
     }
 };
 
-const addToHistory = (songId) => {
-    history.push(songId);
-    return history;
+const addToHistory = (song) => {
+    PLAYLIST.set(song.id, song);
+    return PLAYLIST;
 };
 
 const removeFromHistory = (songId) => {
-    history.splice(history.indexOf(songId), 1);
-    return history;
+    PLAYLIST.delete(songId);
+    return PLAYLIST;
 };
 
 const removeOldestHistory = (songId) => {
-    history.shift(songId);
-    return history;
+    const [[k, v], ...playlist] = PLAYLIST.entries();
+    PLAYLIST = new Map(playlist);
+    return PLAYLIST;
 };
 
 const historyOverflow = () => {
-    return history.length >= MAX_HISTORY;
+    return PLAYLIST.size >= MAX_HISTORY;
 };
 
 const hasHistory = () => {
-    return history.length > 0;
+    return PLAYLIST.size > 0;
 };
 
 const hasPreviousHistory = () => {
-    return typeof history[PLAYER.currentIdx - 1] !== "undefined";
+    const list = [...PLAYLIST.keys()];
+    return list[list.indexOf(PLAYER.id) - 1] !== "undefined";
 };
 
 const hasNextHistory = () => {
-    return typeof history[PLAYER.currentIdx + 1] !== "undefined";
+    const list = [...PLAYLIST.keys()];
+    return list[list.indexOf(PLAYER.id) + 1] !== "undefined";
 };
 
 const getPreviousHistory = () => {
-    return history[PLAYER.currentIdx - 1];
+    if (!hasPreviousHistory()) {
+        return null;
+    }
+    const list = [...PLAYLIST.keys()];
+    return PLAYLIST.get(list[list.indexOf(PLAYER.id) - 1]);
 };
 
 const getNextHistory = () => {
-    return history[PLAYER.currentIdx + 1];
+    if (!hasNextHistory()) {
+        return null;
+    }
+    const list = [...PLAYLIST.keys()];
+    return PLAYLIST.get(list[list.indexOf(PLAYER.id) + 1]);
 };
 
 const getCurrent = () => {
-    return history[PLAYER.currentIdx];
+    return PLAYER.id;
 };
 
 const getCurrentHistoryLength = () => {
-    return history.length;
+    return PLAYLIST.size;
+};
+
+const existInHistory = (songId) => {
+    return PLAYLIST.has(songId);
 };
 
 module.exports = {
@@ -92,4 +107,5 @@ module.exports = {
     getNextHistory,
     getCurrent,
     getCurrentHistoryLength,
+    existInHistory,
 };

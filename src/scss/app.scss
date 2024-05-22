@@ -53,12 +53,16 @@ body {
       #search {
         background-color: $gray;
         border: none;
-        padding: 4px 10px;
+        padding: 6px 10px;
         width: 250px;
-        font-size: 12px;
+        font-size: 14px;
         outline: none;
         color: $white;
-        border-radius: 50px;
+        border-radius: 20px;
+
+        &:focus {
+          outline: $inactive 1px solid;
+        }
       }
     }
 
@@ -201,6 +205,7 @@ body {
 
           &:hover {
             background: $gray;
+            color: $active;
           }
         }
 

@@ -8,11 +8,9 @@ const {
     removeOldestHistory,
     hasHistory,
     hasPreviousHistory,
-    hasNextHistory,
     getNextHistory,
     getPreviousHistory,
     getCurrent,
-    getCurrentHistoryLength,
 } = require("./player");
 let searchingInterval = null;
 let reqResolved = false;
@@ -91,7 +89,7 @@ window.addEventListener("load", () => {
             searching();
 
             // search on YouTube
-            const { title, thumbnail, audio, current, next } = await search(
+            const { title, thumbnail, audio, id, next } = await search(
                 searchTerm
             );
 
@@ -108,11 +106,10 @@ window.addEventListener("load", () => {
             setThumbnail(thumbnail);
             streamAudio(audio);
             updatePlayer({
-                current,
+                id,
                 next,
-                currentIdx: getCurrentHistoryLength(),
             });
-            checkAndAddToHistory({ current, title, thumbnail, audio });
+            checkAndAddToHistory({ id, title, thumbnail, audio });
 
             // activate controllers
             playBtn.classList.remove("inactive");
@@ -244,22 +241,22 @@ function streamAudio(audio) {
 }
 
 async function nextSong() {
-    let song = {};
-    if (hasNextHistory()) {
-        song = getNextHistory();
-    } else {
+    let fromHistory = true;
+    let song = getNextHistory();
+    if (!song) {
+        fromHistory = false;
         song = await getVideoDetails(PLAYER.next);
     }
 
-    const { title, thumbnail, audio, current } = song;
+    const { title, thumbnail, audio, id } = song;
 
     setSongTitle(title);
     setThumbnail(thumbnail);
     streamAudio(audio);
 
-    if (!hasNextHistory()) {
+    if (!fromHistory) {
         checkAndAddToHistory({
-            current,
+            id,
             title,
             thumbnail,
             audio,
@@ -267,21 +264,24 @@ async function nextSong() {
     }
 
     return updatePlayer({
-        currentIdx: PLAYER.currentIdx + 1,
-        current,
+        id,
         next: song.next ? song.next : PLAYER.next,
     });
 }
 
 async function previousSong() {
-    const { title, thumbnail, audio, current } = getPreviousHistory();
+    const song = getPreviousHistory();
+    if (!song) {
+        return;
+    }
+
+    const { title, thumbnail, audio, id } = song;
     setSongTitle(title);
     setThumbnail(thumbnail);
     streamAudio(audio);
 
     return updatePlayer({
-        currentIdx: PLAYER.currentIdx ? PLAYER.currentIdx - 1 : 0,
-        current,
+        id,
     });
 }
 

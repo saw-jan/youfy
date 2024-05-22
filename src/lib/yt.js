@@ -1,3 +1,5 @@
+const { existInHistory } = require("../js/player");
+
 const FILTER = "EgIQAQ%253D%253D"; // only video
 const Y_URL = "https://www.youtube.com";
 const SEARCH_URL = `${Y_URL}/results`;
@@ -28,19 +30,20 @@ export async function search(searchText) {
         title: null,
         thumbnail: null,
         audio: null,
-        current: null,
+        id: null,
         next: null,
     };
 
     try {
         const videoId = parseFirstVideoId(html);
-        const { title, thumbnail, audio, current, next } =
-            await getVideoDetails(videoId);
+        const { title, thumbnail, audio, id, next } = await getVideoDetails(
+            videoId
+        );
 
         song.title = title;
         song.thumbnail = thumbnail;
         song.audio = audio;
-        song.current = current;
+        song.id = id;
         song.next = next;
     } catch (e) {}
 
@@ -86,7 +89,7 @@ export async function getVideoDetails(videoId) {
         title: videoInfo.videoDetails.title,
         thumbnail: videoInfo.videoDetails.thumbnail.thumbnails[0].url,
         audio: audio_link,
-        current: videoId,
+        id: videoId,
         next: nextVideoId,
     };
 }
@@ -126,10 +129,18 @@ function getNextSong(html) {
     const found = html.match(regex.playlist)[0];
     const json = found.replace("var ytInitialData = ", "");
     const respObj = JSON.parse(json);
-    const nextSongId =
+    const results =
         respObj.contents.twoColumnWatchNextResults.secondaryResults
-            .secondaryResults.results[0].compactVideoRenderer.videoId;
-    return nextSongId;
+            .secondaryResults.results;
+    for (const result of results) {
+        if (
+            result.hasOwnProperty("compactVideoRenderer") &&
+            !existInHistory(result.compactVideoRenderer.videoId)
+        ) {
+            return result.compactVideoRenderer.videoId;
+        }
+    }
+    return "";
 }
 
 function getAudioStream(streams) {
