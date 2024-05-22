@@ -61,7 +61,7 @@ body {
         border-radius: 20px;
 
         &:focus {
-          border: $inactive 1px solid;
+          outline: $inactive 1px solid;
         }
       }
     }
