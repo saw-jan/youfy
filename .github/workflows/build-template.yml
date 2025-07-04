@@ -11,7 +11,7 @@ jobs:
       - name: yarn
         uses: DerYeger/yarn-setup-action@master
         with:
-          node-version: 14
+          node-version: 22
 
       - name: build-src
         run: yarn build
