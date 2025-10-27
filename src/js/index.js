@@ -298,10 +298,7 @@ function checkAndAddToHistory(song) {
 }
 
 function setupUpdateListeners() {
-    let updateInfo = null;
-    
     ipc.on("update-available", (event, info) => {
-        updateInfo = info;
         showUpdateNotification(
             `New version ${info.version} is available! Click to download.`,
             () => {
@@ -356,12 +353,14 @@ function showUpdateNotification(message, onClick = null, autoHide = true) {
     titleEl.innerText = message;
     titleEl.style.cursor = onClick ? "pointer" : "default";
     
-    // Remove previous click handler
-    const newTitleEl = titleEl.cloneNode(true);
-    titleEl.parentNode.replaceChild(newTitleEl, titleEl);
+    // Remove previous click handler by storing it in a dataset attribute
+    if (titleEl.updateClickHandler) {
+        titleEl.removeEventListener("click", titleEl.updateClickHandler);
+    }
     
     if (onClick) {
-        newTitleEl.addEventListener("click", onClick);
+        titleEl.updateClickHandler = onClick;
+        titleEl.addEventListener("click", onClick);
     }
     
     // Auto-hide after 10 seconds if specified
@@ -376,6 +375,10 @@ function showUpdateNotification(message, onClick = null, autoHide = true) {
                     currentTitleEl.innerText = originalText;
                 }
                 currentTitleEl.style.cursor = "default";
+                if (currentTitleEl.updateClickHandler) {
+                    currentTitleEl.removeEventListener("click", currentTitleEl.updateClickHandler);
+                    delete currentTitleEl.updateClickHandler;
+                }
             }
         }, 10000);
     }

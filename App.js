@@ -47,40 +47,13 @@ const createWindow = () => {
     ipcMain.handle("close", () => {
         window.close();
     });
-    
-    // Update IPC handlers
-    ipcMain.handle("check-for-updates", async () => {
-        if (process.env.MODE !== "dev") {
-            try {
-                const updateCheckResult = await autoUpdater.checkForUpdates();
-                return updateCheckResult;
-            } catch (error) {
-                return { error: error.message };
-            }
-        }
-        return null;
-    });
-    
-    ipcMain.handle("download-update", async () => {
-        try {
-            await autoUpdater.downloadUpdate();
-            return { success: true };
-        } catch (error) {
-            return { error: error.message };
-        }
-    });
-    
-    ipcMain.handle("install-update", () => {
-        autoUpdater.quitAndInstall(false, true);
-    });
 };
 
 app.whenReady().then(() => {
     initializeConfig();
-    createWindow();
-    
-    // Setup auto-updater event handlers
+    setupUpdateIPCHandlers();
     setupAutoUpdater();
+    createWindow();
     
     // Check for updates on startup (only in production)
     if (process.env.MODE !== "dev") {
@@ -112,6 +85,34 @@ const initializeConfig = () => {
     if (!existsSync(configFile)) {
         writeFileSync(configFile, JSON.stringify({}));
     }
+};
+
+const setupUpdateIPCHandlers = () => {
+    // Update IPC handlers
+    ipcMain.handle("check-for-updates", async () => {
+        if (process.env.MODE !== "dev") {
+            try {
+                const updateCheckResult = await autoUpdater.checkForUpdates();
+                return updateCheckResult;
+            } catch (error) {
+                return { error: error.message };
+            }
+        }
+        return null;
+    });
+    
+    ipcMain.handle("download-update", async () => {
+        try {
+            await autoUpdater.downloadUpdate();
+            return { success: true };
+        } catch (error) {
+            return { error: error.message };
+        }
+    });
+    
+    ipcMain.handle("install-update", () => {
+        autoUpdater.quitAndInstall(false, true);
+    });
 };
 
 const setupAutoUpdater = () => {
