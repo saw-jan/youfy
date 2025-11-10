@@ -152,6 +152,9 @@ window.addEventListener("load", () => {
     document.getElementById("ico-close").addEventListener("click", () => {
         ipc.invoke("close");
     });
+    
+    // Auto-update listeners
+    setupUpdateListeners();
 });
 
 function clickEffect(event) {
@@ -291,5 +294,92 @@ function checkAndAddToHistory(song) {
         addToHistory(song);
     } else {
         addToHistory(song);
+    }
+}
+
+function setupUpdateListeners() {
+    ipc.on("update-available", (event, info) => {
+        showUpdateNotification(
+            `New version ${info.version} is available! Click to download.`,
+            () => {
+                showUpdateNotification("Downloading update...", null, false);
+                ipc.invoke("download-update").then((result) => {
+                    if (result.error) {
+                        showUpdateNotification(
+                            "Failed to download update. Please try again later.",
+                            null,
+                            true
+                        );
+                    }
+                });
+            }
+        );
+    });
+    
+    ipc.on("update-download-progress", (event, progressInfo) => {
+        const percent = Math.round(progressInfo.percent);
+        showUpdateNotification(
+            `Downloading update: ${percent}%`,
+            null,
+            false
+        );
+    });
+    
+    ipc.on("update-downloaded", (event, info) => {
+        showUpdateNotification(
+            `Update ${info.version} downloaded! Click to install and restart.`,
+            () => {
+                ipc.invoke("install-update");
+            }
+        );
+    });
+    
+    ipc.on("update-error", (event, error) => {
+        console.error("Update error:", error);
+    });
+}
+
+function showUpdateNotification(message, onClick = null, autoHide = true) {
+    const titleEl = document.getElementById("title");
+    const placeholderEl = document.getElementById("title-placeholder");
+    
+    // Save current state
+    const wasHidden = titleEl.classList.contains("hidden");
+    const originalText = titleEl.innerText;
+    
+    // Show notification
+    placeholderEl.classList.add("hidden");
+    titleEl.classList.remove("hidden");
+    titleEl.innerText = message;
+    titleEl.style.cursor = onClick ? "pointer" : "default";
+    
+    // Remove previous click handler by storing it in a dataset attribute
+    if (titleEl.updateClickHandler) {
+        titleEl.removeEventListener("click", titleEl.updateClickHandler);
+    }
+    
+    if (onClick) {
+        titleEl.updateClickHandler = onClick;
+        titleEl.addEventListener("click", onClick);
+    }
+    
+    // Auto-hide after 10 seconds if specified
+    if (autoHide) {
+        setTimeout(() => {
+            const currentTitleEl = document.getElementById("title");
+            if (currentTitleEl.innerText === message) {
+                if (wasHidden) {
+                    currentTitleEl.classList.add("hidden");
+                    placeholderEl.classList.remove("hidden");
+                } else {
+                    currentTitleEl.innerText = originalText;
+                }
+                currentTitleEl.style.cursor = "default";
+                if (currentTitleEl.updateClickHandler) {
+                    currentTitleEl.removeEventListener("click", currentTitleEl.updateClickHandler);
+                    delete currentTitleEl.updateClickHandler;
+                }
+            }
+        }, 10000);
     }
 }
